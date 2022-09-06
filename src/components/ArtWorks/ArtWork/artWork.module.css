@@ -1,0 +1,27 @@
+.work:not(:last-child) {
+  margin-right: 30px;
+}
+
+.artImg {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.workInfo {
+  display: flex;
+}
+
+.userAvatar {
+  width: 38px;
+  height: 38px;
+  margin-right: 20px;
+}
+
+.names {
+  font-weight: 600;
+}
+
+.workName {
+  font-weight: 400;
+  font-size: 16px;
+}

@@ -1,0 +1,67 @@
+footer {
+  background: #000000;
+  color: #ffffff;
+}
+
+.footerContainer {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1143px;
+  margin: auto;
+  padding: 50px 0 72px;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+}
+
+.logoImg {
+  width: 176px;
+  height: 26px;
+  margin-bottom: 60px;
+}
+
+.footerLink {
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.offer {
+  margin-bottom: 16px;
+}
+
+.contacts {
+  display: flex;
+}
+
+.imagine {
+  margin-bottom: 16px;
+}
+
+.rights {
+  margin-top: 64px;
+  font-size: 14px;
+}
+
+.rights svg {
+  margin-right: 5px;
+}
+
+.mail {
+  display: flex;
+  flex-direction: column;
+  margin-right: 80px;
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  background: #ffffff;
+  color: black;
+}
+
+.icons svg:not(:last-child) {
+  margin-right: 16px;
+}

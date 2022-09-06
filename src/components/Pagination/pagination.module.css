@@ -1,0 +1,41 @@
+.paginationContainer {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  margin: 100px 0 150px;
+}
+
+.pagination {
+  display: flex;
+  margin-right: 40px;
+}
+
+.paginationItem {
+  border: 1px solid #dfdfdf;
+  padding: 18px 26px;
+  text-decoration: none;
+  color: black;
+}
+
+.paginationItem:hover {
+  background-color: rgb(231, 225, 225);
+}
+
+.active {
+  color: white;
+  background-color: black;
+}
+
+.disabled {
+  opacity: 0.2;
+  cursor: auto;
+}
+
+.arrow {
+  width: 6px;
+  height: 12px;
+}
+
+.paginationResults {
+  color: #959595;
+}

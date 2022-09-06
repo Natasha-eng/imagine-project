@@ -1,0 +1,44 @@
+.headerContainer {
+  box-shadow: 0px 10px 30px 4px rgba(85, 105, 135, 0.03);
+  margin-bottom: 61px;
+}
+
+.header {
+  max-width: 1143px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 43px 0 43px;
+}
+
+.logo {
+  width: 176px;
+  height: 26px;
+}
+
+.iconsContainer {
+  display: flex;
+}
+
+.iconsContainer > .icon:not(:last-child) {
+  margin-right: 34px;
+}
+
+.icon {
+  width: 26px;
+  height: 26px;
+}
+
+.langContainer {
+  display: flex;
+}
+
+.lang {
+  margin-right: 10px;
+}
+
+.headerArrow {
+  width: 16px;
+  height: 12px;
+  align-self: center;
+}
