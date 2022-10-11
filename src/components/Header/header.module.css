@@ -42,3 +42,22 @@
   height: 12px;
   align-self: center;
 }
+
+@media (max-width: 800px) {
+  .headerContainer {
+    margin-bottom: 0;
+  }
+
+  .header {
+    flex-direction: column;
+    padding: 43px 30px 43px;
+  }
+
+  .logo {
+    margin-bottom: 30px;
+  }
+
+  .iconsContainer > .icon:not(:last-child) {
+    margin-right: 18px;
+  }
+}

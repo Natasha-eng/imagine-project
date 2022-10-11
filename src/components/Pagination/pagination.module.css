@@ -2,7 +2,7 @@
   display: flex;
   justify-content: end;
   align-items: center;
-  margin: 100px 0 150px;
+  margin: 50px;
 }
 
 .pagination {
@@ -21,14 +21,14 @@
   background-color: rgb(231, 225, 225);
 }
 
-.active {
-  color: white;
-  background-color: black;
-}
-
 .disabled {
   opacity: 0.2;
   cursor: auto;
+}
+
+.active {
+  color: white;
+  background-color: black;
 }
 
 .arrow {
@@ -37,5 +37,25 @@
 }
 
 .paginationResults {
+  margin-right: 20px;
   color: #959595;
+}
+
+.disable {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  .paginationContainer {
+    flex-direction: column;
+  }
+
+  .pagination {
+    margin-right: 0;
+    margin-bottom: 30px;
+  }
+
+  .paginationItem {
+    padding: 10px 15px;
+  }
 }

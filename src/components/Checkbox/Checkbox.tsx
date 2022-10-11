@@ -16,7 +16,8 @@ export const Checkbox = ({ artObj, changeChecked }: ICheckbox) => {
         id={artObj.value}
         name={artObj.value}
         value={artObj.value}
-        checked={artObj.checked}
+        defaultChecked={artObj.checked}
+        // checked={artObj.checked}
         className={style.radio}
         onClick={() => changeChecked(artObj.id)}
       />

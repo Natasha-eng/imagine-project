@@ -1,16 +1,24 @@
-import React from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import style from "./pagination.module.css";
 import arrowLeft from "./../../assets/pagination/ArrowLeft.png";
 import arrowRight from "./../../assets/pagination/ArrowRight.png";
-import { IUserData } from "../../data/data";
+import { IUserData, } from "../../data/data";
 
 interface PaginationProps {
   users: IUserData[];
   usersPerPage: number;
-  setCurrentPage: (value: number) => void;
+  setCurrentPage: Function;
   currentPage: number;
   indexOfLastUser: number;
   indexOfFirstUser: number;
+  inputValue: string;
+  reset: boolean;
+  setReset: (value: boolean) => void;
+  maxPageNumberLimit: number;
+  minPageNumberLimit: number;
+  setMaxPageNumberLimit: (value: number) => void;
+  setMinPageNumberLimit: (value: number) => void;
+
 }
 
 export const Pagination = ({
@@ -20,83 +28,104 @@ export const Pagination = ({
   currentPage,
   indexOfLastUser,
   indexOfFirstUser,
+  setReset,
+  maxPageNumberLimit,
+  minPageNumberLimit,
+  setMaxPageNumberLimit,
+  setMinPageNumberLimit
+
 }: PaginationProps) => {
   //total number of pages
   const pages = users.length / usersPerPage;
-
   const arrayOfPages: number[] = [];
+
 
   for (let i = 1; i <= Math.ceil(pages); i++) {
     arrayOfPages.push(i);
   }
 
-  const handleClick = (value: number | Function) => {
-    setCurrentPage(value as number);
-  };
 
-  // const [arrOfCurrentButtons, setArrOfCurrentButtons] = useState<
-  //   Array<number | string>
-  // >([]);
+  const handleClick = useCallback(
+    (value: number) => {
+      setCurrentPage(value);
+      setReset(false);
+    }, [setCurrentPage, setReset]
+  )
 
-  // useEffect(() => {
-  //   let tempNumberOfPages: Array<number | string> = [...arrayOfPages];
 
-  //   if (currentButton >= 1 && currentButton < 3) {
-  //     tempNumberOfPages = [1, 2, 3, "...", arrayOfPages.length] as Array<
-  //       number | string
-  //     >;
-  //   } else if (currentButton === 3) {
-  //     const sliced = arrayOfPages.slice(0, 4);
-  //   } else if (currentButton > 3 && currentButton < arrayOfPages.length - 2) {
-  //     const sliced1 = arrayOfPages.slice(currentButton - 2, currentButton);
-  //     const sliced2 = arrayOfPages.slice(currentButton, currentButton + 1);
-  //     tempNumberOfPages = [
-  //       1,
-  //       "...",
-  //       ...sliced1,
-  //       ...sliced2,
-  //       "...",
-  //       arrayOfPages.length,
-  //     ];
-  //   }
-  //   setArrOfCurrentButtons(tempNumberOfPages);
-  // }, [currentButton]);
+  const [pageNumberLimit, setPageNumberLimit] = useState(3);
+
+  let renderPageNumber = useMemo(() => arrayOfPages.map((pageNumber, index) => {
+
+    if ((pageNumber < maxPageNumberLimit + 1 && pageNumber > minPageNumberLimit)) {
+
+
+      return (
+        <div
+          key={index}
+          className={`${style.paginationItem} ${currentPage === pageNumber ? style.active : ""
+            }`}
+          onClick={() => handleClick(pageNumber)}
+        ><>
+            {pageNumber}</>
+        </div>)
+
+    } else {
+      return null;
+    }
+
+
+  }
+
+  ), [currentPage, maxPageNumberLimit, minPageNumberLimit, handleClick, arrayOfPages])
 
   const nextPageHandler = () => {
-    handleClick((state: number) => (state === 1 ? state : state - 1));
+    setCurrentPage((state: number) => state + 1);
+
+    if (currentPage + 1 > maxPageNumberLimit) {
+      setMaxPageNumberLimit(maxPageNumberLimit + pageNumberLimit);
+      setMinPageNumberLimit(minPageNumberLimit + pageNumberLimit);
+    }
   };
 
   const prevPageHandler = () => {
-    handleClick((state: number) =>
-      state === arrayOfPages.length ? state : state + 1
-    );
+    setCurrentPage((state: number) => state - 1);
+
+    if ((currentPage - 1) % minPageNumberLimit === 0) {
+      setMaxPageNumberLimit(maxPageNumberLimit - pageNumberLimit);
+      setMinPageNumberLimit(minPageNumberLimit - pageNumberLimit);
+    }
   };
+
+  let pageIncrementBtn = null;
+  if (arrayOfPages.length > maxPageNumberLimit) {
+    pageIncrementBtn = <div className={`${style.paginationItem} ${currentPage === arrayOfPages[arrayOfPages.length - 1] ? style.disable : ""}`} onClick={nextPageHandler}>&hellip;</div>
+  }
+
+  let pageDecrementBtn = null;
+  if (arrayOfPages.length > maxPageNumberLimit) {
+    pageDecrementBtn = <div className={`${style.paginationItem} ${currentPage === arrayOfPages[0] ? style.disable : ""}`} onClick={prevPageHandler}>&hellip;</div>
+  }
 
   return (
     <div className={style.paginationContainer}>
       <div className={style.pagination}>
-        <div className={`${style.paginationItem} `} onClick={nextPageHandler}>
-          <img src={arrowLeft} alt="left arrow" className={style.arrow} />
-        </div>
-        {arrayOfPages.map((page, index) => (
-          <div
-            key={index}
-            className={`${style.paginationItem} ${
-              currentPage === page ? style.active : ""
-            }`}
-            onClick={() => handleClick(page as number)}
-          >
-            {page}
-          </div>
-        ))}
-
-        <div className={style.paginationItem} onClick={prevPageHandler}>
-          <img src={arrowRight} alt="right arrow" className={style.arrow} />
-        </div>
+        <button disabled={currentPage === arrayOfPages[0]} className={`${style.paginationItem} `} onClick={prevPageHandler}>
+          <img src={arrowLeft} alt="left arrow" className={currentPage === arrayOfPages[0] ? `${style.arrow} ${style.disabled}` : style.arrow} />
+        </button>
+        <>
+          {pageDecrementBtn}
+          {renderPageNumber}
+          {pageIncrementBtn}
+        </>
+        <button disabled={currentPage === arrayOfPages[arrayOfPages.length - 1]} className={style.paginationItem} onClick={nextPageHandler}>
+          <img src={arrowRight} alt="right arrow" className={currentPage === arrayOfPages[arrayOfPages.length - 1] ? `${style.arrow} ${style.disabled}` : style.arrow} />
+        </button>
       </div>
       <div className={style.paginationResults}>
         {indexOfFirstUser + 1}-{indexOfLastUser} of {users.length} Results
       </div>
+
     </div>
   );
 };

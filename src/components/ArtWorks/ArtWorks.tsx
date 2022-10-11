@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { artData, usersData } from "../../data/data";
+import React, { MouseEvent, RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { artData, IArtDate, usersData } from "../../data/data";
 import style from "./artWorks.module.css";
 import arrow from "../../assets/Arrow.png";
 import { ArtWork } from "./ArtWork/ArtWork";
@@ -24,10 +24,14 @@ export const ArtWorks = () => {
   const [categories, setCategories] = useState(artData);
   const [inputValue, setInputValue] = useState("");
   const [users, setUsers] = useState(usersData);
+  const [reset, setReset] = useState(false);
 
   //pagination state
-  const [currentPage, setCurrentPage] = useState(1);
+  let [currentPage, setCurrentPage] = useState<any>(1);
   const [usersPerPage, setUsersPerPage] = useState(4);
+
+  const [maxPageNumberLimit, setMaxPageNumberLimit] = useState(3);
+  const [minPageNumberLimit, setMinPageNumberLimit] = useState(0);
 
   const openCategoryHandler = useCallback(() => {
     setOpenedCatedory(!openedCategory);
@@ -37,6 +41,33 @@ export const ArtWorks = () => {
     setOpenedSearchInput(!openedSearchInput);
   }, [openedSearchInput]);
 
+  let categoryMenuRef: RefObject<HTMLDivElement> = useRef() as RefObject<HTMLDivElement>
+
+  let inputMenuRef: RefObject<HTMLDivElement> = useRef() as RefObject<HTMLDivElement>
+
+  useEffect(() => {
+    let categoryHandler = (e: any): void => {
+      if (!categoryMenuRef.current?.contains(e.target as HTMLElement)) {
+        setOpenedCatedory(false);
+
+      }
+    }
+
+    let inputHnadler = (e: any): void => {
+      if (!inputMenuRef.current?.contains(e.target as HTMLDivElement | HTMLInputElement)) {
+        setOpenedSearchInput(false);
+      }
+    }
+
+    document.addEventListener("mousedown", categoryHandler)
+    document.addEventListener("mousedown", inputHnadler)
+
+    return () => {
+      document.removeEventListener('mousedown', categoryHandler)
+      document.removeEventListener('mousedown', inputHnadler)
+    }
+  })
+
   const changeCheckedHandler = (value: number) => {
     const changeCheck = categories.map((category) =>
       category.id === value
@@ -45,15 +76,22 @@ export const ArtWorks = () => {
     );
 
     setCategories(changeCheck);
+    setReset(true)
   };
 
-  const applyFilters = () => {
+  const changeInputValue = (value: string) => {
+    setReset(true)
+    setInputValue(value)
+  }
+
+  const applyFilters = useCallback(() => {
     let updatedUsers = usersData;
 
     //category filter
     let categoryChecked = categories
       .filter((cat) => cat.checked)
       .map((cat) => cat.value);
+
     if (categoryChecked.length) {
       updatedUsers = updatedUsers.filter((user) =>
         categoryChecked.includes(user.category)
@@ -71,10 +109,11 @@ export const ArtWorks = () => {
     }
 
     setUsers(updatedUsers);
-  };
+  }, [categories, inputValue])
 
-  //index of last item in each page
-  const indexOfLastUser = currentPage * usersPerPage;
+
+  //index of last user in each page
+  const indexOfLastUser = currentPage as number * usersPerPage;
 
   //index of first user in each page
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
@@ -84,7 +123,13 @@ export const ArtWorks = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [categories, inputValue]);
+    if (reset) {
+      setCurrentPage(1);
+      setMaxPageNumberLimit(3);
+      setMinPageNumberLimit(0);
+    }
+  }, [categories, inputValue, applyFilters, reset]);
+
 
   return (
     <div className={style.main}>
@@ -93,7 +138,7 @@ export const ArtWorks = () => {
         <div className={style.quantity}>588</div>
       </div>
       <div className={style.optionsContainer}>
-        <div className={style.dropdownContainer}>
+        <div className={style.dropdownContainer} ref={categoryMenuRef}>
           <div className={style.dropdown} onClick={openCategoryHandler}>
             <div>Category</div>
             <img src={arrow} alt="arrow" className={style.dropdownArrow} />
@@ -110,7 +155,7 @@ export const ArtWorks = () => {
             ))}
           </div>
         </div>
-        <div className={style.searchInputDropdown}>
+        <div className={style.searchInputDropdown} ref={inputMenuRef}>
           <div className={style.dropdown} onClick={openSearchInputHandler}>
             <div>Name</div>
             <img src={arrow} alt="arrow" className={style.dropdownArrow} />
@@ -118,15 +163,15 @@ export const ArtWorks = () => {
           <SearchInput
             openedSearchInput={openedSearchInput}
             value={inputValue}
-            changeInput={setInputValue}
+            changeInput={changeInputValue}
           />
         </div>
       </div>
-      <div className={style.works}>
+      {currentUsers.length ? <div className={style.works}>
         {currentUsers.map((user, index) => (
           <ArtWork workInfo={user} key={index} />
         ))}
-      </div>
+      </div> : <EmptyResult />}
       <Pagination
         users={users}
         usersPerPage={usersPerPage}
@@ -134,6 +179,13 @@ export const ArtWorks = () => {
         currentPage={currentPage}
         indexOfLastUser={indexOfLastUser}
         indexOfFirstUser={indexOfFirstUser}
+        inputValue={inputValue}
+        reset={reset}
+        setReset={setReset}
+        maxPageNumberLimit={maxPageNumberLimit}
+        minPageNumberLimit={minPageNumberLimit}
+        setMaxPageNumberLimit={setMaxPageNumberLimit}
+        setMinPageNumberLimit={setMinPageNumberLimit}
       />
     </div>
   );
